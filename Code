@@ -1,0 +1,112 @@
+local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
+
+local window = DrRayLibrary:Load("Rinns Hub", "Default")
+
+local mainTab = DrRayLibrary.newTab("Main Tab", "ImageIdHere")
+local miscTab = DrRayLibrary.newTab("Misc Tab", "ImageIdHere")
+
+local autoGetBlocks = false
+local autoSpin = false
+local autoRebirth = false
+local autoClaimPlayTimeRewards = false
+
+-- Function to handle Auto Get Blocks
+local function handleAutoGetBlocks()
+    spawn(function()
+        while autoGetBlocks do
+            game:GetService("ReplicatedStorage"):WaitForChild("Communication"):WaitForChild("Hit"):FireServer()
+            wait(0.1) -- Adjust the wait time as needed
+        end
+    end)
+end
+
+-- Function to handle Auto Spin
+local function handleAutoSpin()
+    spawn(function()
+        while autoSpin do
+            game:GetService("ReplicatedStorage"):WaitForChild("Communication"):WaitForChild("UseSpinWheel"):InvokeServer()
+            wait(0.1) -- Adjust the wait time as needed
+        end
+    end)
+end
+
+-- Function to handle Auto Rebirth
+local function handleAutoRebirth()
+    spawn(function()
+        while autoRebirth do
+            game:GetService("ReplicatedStorage"):WaitForChild("Communication"):WaitForChild("Rebirth"):FireServer()
+            wait(0.1) -- Adjust the wait time as needed
+        end
+    end)
+end
+
+-- Function to handle Auto Claim PlayTime Rewards
+local function handleAutoClaimPlayTimeRewards()
+    spawn(function()
+        while autoClaimPlayTimeRewards do
+            for i = 1, 12 do
+                local args = { [1] = i }
+                game:GetService("ReplicatedStorage"):WaitForChild("Communication"):WaitForChild("ClaimPlaytimeReward"):FireServer(unpack(args))
+            end
+            wait(0.1) -- Adjust the wait time as needed
+        end
+    end)
+end
+
+mainTab.newToggle("Auto Get Blocks", "Gets Blocks for you (stand in the circle)", true, function(toggleState)
+    autoGetBlocks = toggleState
+    if toggleState then
+        handleAutoGetBlocks()
+    else
+        print("Auto Get Blocks Off")
+    end
+end)
+
+mainTab.newToggle("Auto Spin Wheel", "Spins the wheel for you", true, function(toggleState)
+    autoSpin = toggleState
+    if toggleState then
+        handleAutoSpin()
+    else
+        print("Auto Spin Off")
+    end
+end)
+
+mainTab.newToggle("Auto Rebirth", "Rebirths for you when you have enough", true, function(toggleState)
+    autoRebirth = toggleState
+    if toggleState then
+        handleAutoRebirth()
+    else
+        print("Auto Rebirth Off")
+    end
+end)
+
+mainTab.newToggle("AutoClaim PlayTime Rewards", "Claims playtime rewards for you", true, function(toggleState)
+    autoClaimPlayTimeRewards = toggleState
+    if toggleState then
+        handleAutoClaimPlayTimeRewards()
+    else
+        print("AutoClaim PlayTime Rewards Off")
+    end
+end)
+
+miscTab.newButton("BuyGadget (Shop1)", "Buys gadget from Shop1", function()
+    local args = { [1] = "Shop1" }
+    game:GetService("ReplicatedStorage"):WaitForChild("Communication"):WaitForChild("BuyGadget"):FireServer(unpack(args))
+    print('Bought gadget from Shop1')
+end)
+
+for i = 2, 9 do
+    miscTab.newButton("BuyGadget (Shop" .. i .. ")", "Buys gadget from Shop" .. i, function()
+        local args = { [1] = "Shop" .. i }
+        game:GetService("ReplicatedStorage"):WaitForChild("Communication"):WaitForChild("BuyGadget"):FireServer(unpack(args))
+        print('Bought gadget from Shop' .. i)
+    end)
+end
+
+miscTab.newButton("Get all Lucky Blocks", "Get all 16 LuckBlocks around the map for you", function()
+    for i = 1, 16 do
+        local args = { [1] = i }
+        game:GetService("ReplicatedStorage"):WaitForChild("Communication"):WaitForChild("CollectLuckyblock"):FireServer(unpack(args))
+    end
+    print('Collected all Lucky Blocks!')
+end)
